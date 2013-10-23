@@ -33,6 +33,14 @@ describe('SqlQuery', function () {
     expect(query.build()).toBe('SELECT * FROM `user` ORDER BY `user`.`id` ASC;');
   });
 
+  it('should group by', function () {
+    query.select().from('user').groupBy('first_name');
+    expect(query.build()).toBe('SELECT * FROM `user` GROUP BY `first_name`;');
+
+    query.reset().select().from('user', 'u').groupBy({field: 'first_name', alias: 'u'});
+    expect(query.build()).toBe('SELECT * FROM `user` AS u GROUP BY u.`first_name`;');
+  });
+
   it('should support in', function () {
     query.select().from('user').where({ id: [0,1,2] });
     expect(query.build()).toBe('SELECT * FROM `user` WHERE `id` IN (0, 1, 2);');
@@ -80,6 +88,9 @@ describe('SqlQuery', function () {
   it('should support aggregate functions', function () {
     query.select({ count: 'id', alias: 'count_id' }).from('user');
     expect(query.build()).toBe('SELECT COUNT(`id`) AS count_id FROM `user`;');
+
+    query.reset().select({ sum: 'age', alias: 'years' }).from('user');
+    expect(query.build()).toBe('SELECT SUM(`age`) AS years FROM `user`;');
   });
 
   it('should format a field', function () {

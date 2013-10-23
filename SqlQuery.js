@@ -37,7 +37,7 @@ SqlQuery.prototype = {
         table = select.table,
         field = count || sum || select.field,
         fieldSql = '';
-      
+
       if (table_alias) {
         fieldSql += table_alias + '.';
       } else if (table) {
@@ -125,7 +125,7 @@ SqlQuery.prototype = {
       where = this.parts.where;
 
     if (!where) return '';
-    
+
     var num_where = where.length,
       last_index = num_where - 1,
       self = this;
@@ -239,7 +239,7 @@ SqlQuery.prototype = {
       set = this.parts.set;
 
     if (!set) return '';
-    
+
     var num_set = set.length,
       last_index = num_set - 1,
       self = this;
@@ -307,7 +307,7 @@ SqlQuery.prototype = {
     });
 
     insertSql += ')';
-  
+
     return insertSql;
   },
 
@@ -389,7 +389,7 @@ SqlQuery.prototype = {
     var sql = '';
 
     if (this.parts.select) {
-      sql = this._getSelect() + this._getFrom() + this._getJoin() + this._getWhere() + this._getOrderBy() + this._getLimit();
+      sql = this._getSelect() + this._getFrom() + this._getJoin() + this._getWhere() + this._getGroupBy() + this._getOrderBy() + this._getLimit();
     } else if (this.parts.update) {
       sql = this._getUpdate() + this._getSet() + this._getWhere();
     } else if (this.parts.inserts) {

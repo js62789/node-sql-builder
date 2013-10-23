@@ -8,6 +8,7 @@ A nodejs module for building sql queries
 ## SqlQuery
 ### Methods
 - `reset` Reset the sql statement back to an empty string
+- `build` Build and return the sql statement string
 - `select(fields)`
 - `from(table, alias)`
 - `where(key, val)`
