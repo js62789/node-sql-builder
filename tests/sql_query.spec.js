@@ -52,12 +52,17 @@ describe('SqlQuery', function () {
   });
 
   it('should create an insert statement', function () {
-    query.insert({id: 1, first_name: 'cat'}).into('user');
+    query.insert().into('user', ['id', 'first_name']).values({id: 1, first_name: 'cat'});
     expect(query.build()).toBe("INSERT INTO `user` (`id`, `first_name`) VALUES (1, 'cat');");
   });
 
+  it('should create an insert statement with multiple values', function () {
+    query.insert().into('user', ['id', 'first_name']).values([{id: 1, first_name: 'cat'}, {id: 2, first_name: 'dog'}]);
+    expect(query.build()).toBe("INSERT INTO `user` (`id`, `first_name`) VALUES (1, 'cat'), (2, 'dog');");
+  });
+
   it('should create an insert ignore statement', function () {
-    query.insert({id: 1, first_name: 'cat'}).ignore().into('user');
+    query.insertIgnore().into('user', ['id', 'first_name']).values({id: 1, first_name: 'cat'});
     expect(query.build()).toBe("INSERT IGNORE INTO `user` (`id`, `first_name`) VALUES (1, 'cat');");
   });
 
