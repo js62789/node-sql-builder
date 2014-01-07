@@ -56,6 +56,11 @@ describe('SqlQuery', function () {
     expect(query.build()).toBe("INSERT INTO `user` (`id`, `first_name`) VALUES (1, 'cat');");
   });
 
+  it('should create an insert ignore statement', function () {
+    query.insert({id: 1, first_name: 'cat'}).ignore().into('user');
+    expect(query.build()).toBe("INSERT IGNORE INTO `user` (`id`, `first_name`) VALUES (1, 'cat');");
+  });
+
   it('should create a delete statement', function () {
     query.destroy().from('user').where({id: 1});
     expect(query.build()).toBe('DELETE FROM `user` WHERE `id` = 1;');

@@ -266,6 +266,11 @@ SqlQuery.prototype = {
     return this;
   },
 
+  ignore: function () {
+    this.parts.insertIgnore = true;
+    return this;
+  },
+
   into: function (table) {
     this.parts.into = table;
     return this;
@@ -276,7 +281,7 @@ SqlQuery.prototype = {
       inserts = this.parts.inserts,
       num_inserts = inserts.length,
       last_index = num_inserts - 1,
-      insertSql = 'INSERT INTO ',
+      insertSql = this.parts.insertIgnore ? 'INSERT IGNORE INTO ' : 'INSERT INTO ',
       keys = [],
       values = [],
       self = this;
