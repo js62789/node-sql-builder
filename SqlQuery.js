@@ -254,8 +254,9 @@ SqlQuery.prototype = {
     return setSql;
   },
 
-  insert: function () {
+  insert: function (values) {
     this.parts.insert = true;
+    if (values) this.values(values);
     return this;
   },
 

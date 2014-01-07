@@ -61,6 +61,11 @@ describe('SqlQuery', function () {
     expect(query.build()).toBe("INSERT INTO `user` (`id`, `first_name`) VALUES (1, 'cat'), (2, 'dog');");
   });
 
+  it('should create an insert statement with multiple values', function () {
+    query.insert([{id: 1, first_name: 'cat'}, {id: 2, first_name: 'dog'}]).into('user', ['id', 'first_name']);
+    expect(query.build()).toBe("INSERT INTO `user` (`id`, `first_name`) VALUES (1, 'cat'), (2, 'dog');");
+  });
+
   it('should create an insert ignore statement', function () {
     query.insertIgnore().into('user', ['id', 'first_name']).values({id: 1, first_name: 'cat'});
     expect(query.build()).toBe("INSERT IGNORE INTO `user` (`id`, `first_name`) VALUES (1, 'cat');");
