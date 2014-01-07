@@ -260,20 +260,21 @@ SqlQuery.prototype = {
     return this;
   },
 
-  insertIgnore: function () {
-    this.insert();
+  insertIgnore: function (values) {
+    this.insert(values);
     this.parts.insertIgnore = true;
     return this;
   },
 
   into: function (table, keys) {
     this.parts.into = table;
-    this.parts.keys = keys;
+    if (keys) this.parts.keys = keys;
     return this;
   },
 
   values: function (vals) {
     this.parts.values = this.parts.values || [];
+    this.parts.keys = this.parts.keys || [];
 
     if (vals instanceof Array) {
       for (var i=0, num=vals.length; i<num; i++) {
@@ -288,13 +289,22 @@ SqlQuery.prototype = {
 
   _getInsert: function () {
     var table = this.parts.into,
-      keys = this.parts.keys,
+      keys = this.parts.keys || [],
       values = this.parts.values,
       insertSql = this.parts.insertIgnore ? 'INSERT IGNORE INTO ' : 'INSERT INTO ',
       self = this;
 
     insertSql += this.formatField(table);
     insertSql += ' (';
+
+    if (!keys.length && values) {
+      var firstValue = values[0];
+      if (firstValue instanceof Object) {
+        for (var key in firstValue) {
+          keys.push(key);
+        }
+      }
+    }
 
     keys.forEach(function(field, i){
       insertSql += self.formatField(field);
@@ -303,35 +313,44 @@ SqlQuery.prototype = {
       }
     });
 
-    insertSql += ') VALUES';
+    insertSql += ')';
+
+    return insertSql;
+  },
+
+  _getValues: function () {
+    var values = this.parts.values,
+      valueSql = ' VALUES',
+      self = this;
 
     values.forEach(function(value, i){
-      insertSql += ' (';
+      valueSql += ' (';
       if (value instanceof Array) {
         value.forEach(function(val, a){
-          insertSql += self.formatValue(val);
+          valueSql += self.formatValue(val);
           if (a !== value.length-1) {
-            insertSql += ', ';
+            valueSql += ', ';
           }
         });
+      } else if (typeof value === 'string') {
+        valueSql += self.formatValue(value);
       } else {
         var index = 0;
         var numKeys = Object.keys(value).length;
         for (var key in value) {
-          insertSql += self.formatValue(value[key]);
+          valueSql += self.formatValue(value[key]);
           if (index !== numKeys-1) {
-            insertSql += ', ';
+            valueSql += ', ';
           }
           index++;
         }
       }
-      insertSql += ')';
+      valueSql += ')';
       if (i !== values.length-1) {
-        insertSql += ',';
+        valueSql += ',';
       }
     });
-
-    return insertSql;
+    return valueSql;
   },
 
   destroy: function () {
@@ -416,7 +435,7 @@ SqlQuery.prototype = {
     } else if (this.parts.update) {
       sql = this._getUpdate() + this._getSet() + this._getWhere();
     } else if (this.parts.insert) {
-      sql = this._getInsert();
+      sql = this._getInsert() + this._getValues();
     } else if (this.parts.destroy) {
       sql = this._getDestroy() + this._getFrom() + this._getWhere();
     } else if (this.parts.truncate) {
