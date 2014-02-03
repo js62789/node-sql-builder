@@ -1,5 +1,5 @@
 {
-  "name": "node-sql-builder",
+  "name": "sql-builder",
   "version": "0.1.0",
   "description": "A nodejs module for building SQL queries",
   "main": "SqlQuery.js",
