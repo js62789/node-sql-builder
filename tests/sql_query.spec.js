@@ -17,6 +17,9 @@ describe('SqlQuery', function () {
 
     query.reset().select(['id', 'first_name']).from('user').where({id: 1});
     expect(query.build()).toBe('SELECT `id`, `first_name` FROM `user` WHERE `id` = 1;');
+
+    query.reset().select(['id', 'first_name']).from('user').where({id: 1, age: 10});
+    expect(query.build()).toBe('SELECT `id`, `first_name` FROM `user` WHERE `id` = 1 AND `age` = 10;');
   });
 
   it('should support subqueries', function () {

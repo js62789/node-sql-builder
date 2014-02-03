@@ -142,7 +142,7 @@ SqlQuery.prototype = {
         whereSql += self.formatField(field) + ' = ' + self.formatValue(condition.value);
       }
       if (i !== last_index) {
-        whereSql += ' AND';
+        whereSql += ' AND ';
       }
     });
 
