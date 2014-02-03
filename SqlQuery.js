@@ -115,6 +115,9 @@ SqlQuery.prototype = {
         this.where(field, key[field]);
       }
     } else {
+      if (typeof val === 'object' && val["$md5"]) {
+        val = 'MD5("'+val["$md5"]+'")';
+      }
       this.parts.where.push({field: key, value: val});
     }
     return this;
@@ -458,7 +461,7 @@ SqlQuery.prototype = {
   },
 
   formatValue: function (value) {
-    if (typeof value === 'number') return value;
+    if (typeof value === 'number' || value.indexOf('(') !== -1) return value;
     return "'" + value + "'";
   }
 

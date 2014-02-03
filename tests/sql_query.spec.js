@@ -111,6 +111,11 @@ describe('SqlQuery', function () {
     expect(query.build()).toBe('SELECT SUM(`age`) AS years FROM `user`;');
   });
 
+  it('should support encryption', function () {
+    query.select().from('user').where({password: {$md5: 'password'}});
+    expect(query.build()).toBe('SELECT * FROM `user` WHERE `password` = MD5("password");');
+  });
+
   it('should format a field', function () {
     expect(query.formatField('*')).toBe('*');
     expect(query.formatField('user_id')).toBe('`user_id`');
